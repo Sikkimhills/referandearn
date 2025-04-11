@@ -7,19 +7,19 @@ RUN docker-php-ext-install pdo pdo_mysql
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
+# Set working directory
+WORKDIR /var/www/html
+
 # Copy files to container
-COPY . /var/www/html/
+COPY . .
 
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod 755 /var/www/html \
-    && chmod 644 /var/www/html/index.php \
-    && chmod 644 /var/www/html/composer.json \
-    && chmod 666 /var/www/html/users.json \
-    && chmod 666 /var/www/html/error.log
-
-# Set working directory
-WORKDIR /var/www/html
+    && [ -f index.php ] && chmod 644 index.php || true \
+    && [ -f composer.json ] && chmod 644 composer.json || true \
+    && touch users.json error.log \
+    && chmod 666 users.json error.log
 
 # Expose port 80
 EXPOSE 80
